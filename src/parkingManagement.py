@@ -10,13 +10,13 @@ class ParkingManagement:
 
     def numeratingVacancies(self):
         for i in range(self._motorcycleVacancies):
-            self._bTree.insert('M' + str(i + 1))
+            self._bTree.insert('M' + str(i + 1), True)
 
         for i in range(self._bigCarVacancies):
-            self._bTree.insert('G' + str(i + 1))
+            self._bTree.insert('G' + str(i + 1), True)
 
         for i in range(self._commonCarVacancies):
-            self._bTree.insert('C' + str(i + 1))
+            self._bTree.insert('C' + str(i + 1), True)
 
     def showVacancies(self):
         self._bTree.print_binary_tree()

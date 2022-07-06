@@ -19,6 +19,12 @@ class TreeADT(ABC):
         pass
 
 
+class Vacancy:
+    def __init__(self, name, available):
+        self.name = name
+        self.available = available
+
+
 class BinaryNode:
 
     def __init__(self, data=None, parent=None, left=None, right=None):
@@ -72,7 +78,7 @@ class BinaryNode:
     def __eq__(self, other):
         result = False
         if isinstance(other, BinaryNode):
-            if self._data == other._data:
+            if self._data.name == other._data.name:
                 result = True
         return result
 
@@ -82,14 +88,14 @@ class BinaryNode:
     def __le__(self, other):
         result = False
         if isinstance(other, BinaryNode):
-            if self._data <= other._data:
+            if self._data.name <= other._data.name:
                 result = True
         return result
 
     def __lt__(self, other):
         result = False
         if isinstance(other, BinaryNode):
-            if self._data < other._data:
+            if self._data.name < other._data.name:
                 result = True
         return result
 
@@ -123,8 +129,9 @@ class BinaryTree(TreeADT):
             result = result.right_node()
         return result
 
-    def insert(self, elem):
-        node = BinaryNode(elem)
+    def insert(self, name, available):
+        vacancy = Vacancy(name, available)
+        node = BinaryNode(vacancy)
         if self.empty():
             self._root = node
         else:
@@ -241,14 +248,14 @@ class BinaryTree(TreeADT):
         if not root:
             return
         self.__in_order(root._left, lista)
-        lista.append(root._data)
+        lista.append({ 'name: ' + str(root._data.name), 'available: ' + str(root._data.available) })
         self.__in_order(root._right, lista)
         return lista
 
     def __pre_order(self, root, lista):
         if not root:
             return
-        lista.append(root._data)
+        lista.append({ 'name: ' + str(root._data.name), 'available: ' + str(root._data.available) })
         self.__pre_order(root._left, lista)
         self.__pre_order(root._right, lista)
         return lista
@@ -258,7 +265,7 @@ class BinaryTree(TreeADT):
             return
         self.__post_order(root._left, lista)
         self.__post_order(root._right, lista)
-        lista.append(root._data)
+        lista.append({ 'name: ' + str(root._data.name), 'available: ' + str(root._data.available) })
         return lista
 
     def print_binary_tree(self):
