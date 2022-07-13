@@ -20,8 +20,9 @@ class TreeADT(ABC):
 
 
 class Vacancy:
-    def __init__(self, name, available):
-        self.name = name
+    def __init__(self, vacancy_type, number, available):
+        self.vacancy_type = vacancy_type
+        self.number = number
         self.available = available
 
 
@@ -78,7 +79,7 @@ class BinaryNode:
     def __eq__(self, other):
         result = False
         if isinstance(other, BinaryNode):
-            if self._data.name == other._data.name:
+            if self._data.vacancy_type == other._data.vacancy_type and self._data.number == other._data.number:
                 result = True
         return result
 
@@ -88,14 +89,14 @@ class BinaryNode:
     def __le__(self, other):
         result = False
         if isinstance(other, BinaryNode):
-            if self._data.name <= other._data.name:
+            if self._data.vacancy_type == other._data.vacancy_type and self._data.number <= other._data.number:
                 result = True
         return result
 
     def __lt__(self, other):
         result = False
         if isinstance(other, BinaryNode):
-            if self._data.name < other._data.name:
+            if self._data.vacancy_type == other._data.vacancy_type and self._data.number < other._data.number:
                 result = True
         return result
 
@@ -129,8 +130,8 @@ class BinaryTree(TreeADT):
             result = result.right_node()
         return result
 
-    def insert(self, name, available):
-        vacancy = Vacancy(name, available)
+    def insert(self, vacancy_type, number, available):
+        vacancy = Vacancy(vacancy_type, number, available)
         node = BinaryNode(vacancy)
         if self.empty():
             self._root = node
@@ -248,14 +249,14 @@ class BinaryTree(TreeADT):
         if not root:
             return
         self.__in_order(root._left, lista)
-        lista.append({ 'name: ' + str(root._data.name), 'available: ' + str(root._data.available) })
+        lista.append({ 'type: ' + str(root._data.vacancy_type), 'number: ' + str(root._data.number), 'available: ' + str(root._data.available) })
         self.__in_order(root._right, lista)
         return lista
 
     def __pre_order(self, root, lista):
         if not root:
             return
-        lista.append({ 'name: ' + str(root._data.name), 'available: ' + str(root._data.available) })
+        lista.append({ 'type: ' + str(root._data.vacancy_type), 'number: ' + str(root._data.number), 'available: ' + str(root._data.available) })
         self.__pre_order(root._left, lista)
         self.__pre_order(root._right, lista)
         return lista
@@ -265,8 +266,64 @@ class BinaryTree(TreeADT):
             return
         self.__post_order(root._left, lista)
         self.__post_order(root._right, lista)
-        lista.append({ 'name: ' + str(root._data.name), 'available: ' + str(root._data.available) })
+        lista.append({ 'type: ' + str(root._data.vacancy_type), 'number: ' + str(root._data.number), 'available: ' + str(root._data.available) })
         return lista
+
+    def traversal_vacancies(self, available_motorcycle_vacancies=False, available_big_car_vacancies=False, available_common_car_vacancies=False):
+        result = list()
+
+        if (available_motorcycle_vacancies):
+            available_motorcycle_vacancies_list = list()
+            result.append(self.__available_motorcycle_vacancies(self._root, available_motorcycle_vacancies_list))
+        else:
+            result.append(None)
+
+        if (available_big_car_vacancies):
+            available_big_car_vacancies_list = list()
+            result.append(self.__available_big_car_vacancies(self._root, available_big_car_vacancies_list))
+        else:
+            result.append(None)
+
+        if (available_common_car_vacancies):
+            available_common_car_vacancies_list = list()
+            result.append(self.__available_common_car_vacancies(self._root, available_common_car_vacancies_list))
+        else:
+            result.append(None)
+
+        return result
+
+    def __available_motorcycle_vacancies(self, root, lista):
+        if not root:
+            return
+        self.__available_motorcycle_vacancies(root._left, lista)
+        if root._data.vacancy_type == 'M' and root._data.available:
+            lista.append(root._data)
+        self.__available_motorcycle_vacancies(root._right, lista)
+        return lista
+
+    def __available_big_car_vacancies(self, root, lista):
+        if not root:
+            return
+        self.__available_big_car_vacancies(root._left, lista)
+        if root._data.vacancy_type == 'G' and root._data.available:
+            lista.append(root._data)
+        self.__available_big_car_vacancies(root._right, lista)
+        return lista
+
+    def __available_common_car_vacancies(self, root, lista):
+        if not root:
+            return
+        self.__available_common_car_vacancies(root._left, lista)
+        if root._data.vacancy_type == 'C' and root._data.available:
+            lista.append(root._data)
+        self.__available_common_car_vacancies(root._right, lista)
+        return lista
+
+    def set_available(self, node):
+        belongs, vacancy = self.search(node)
+        if belongs:
+            node.available = not node.available
+            vacancy.set_data(node)
 
     def print_binary_tree(self):
         if self._root:
